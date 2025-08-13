@@ -4,6 +4,8 @@ use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\UsuariosController;
 use App\Http\Controllers\ZonasSectoresController;
 use App\Http\Controllers\EmpadronadosController;
+use App\Http\Controllers\ProgramacionController;
+use App\Http\Controllers\RecoleccionEvidenciaController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
@@ -63,6 +65,16 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/api/usuarios-stats', [UsuariosController::class, 'getStats'])->name('api.usuarios.stats');
     Route::get('/api/zonas-stats', [ZonasSectoresController::class, 'getStats'])->name('api.zonas.stats');
     Route::get('/api/tipo-residuos-stats', [EmpadronadosController::class, 'getTipoResiduosStats'])->name('api.tipo-residuos.stats');
+
+    // Programación: CRUD
+    Route::get('/programacion', [ProgramacionController::class, 'index'])->name('programacion.index');
+    Route::post('/programacion', [ProgramacionController::class, 'store'])->name('programacion.store');
+    Route::put('/programacion/{programacion}', [ProgramacionController::class, 'update'])->name('programacion.update');
+    Route::delete('/programacion/{programacion}', [ProgramacionController::class, 'destroy'])->name('programacion.destroy');
+
+    // Mis Recolecciones (usuarios rol 3)
+    Route::get('/recoleccion', [RecoleccionEvidenciaController::class, 'index'])->name('recoleccion.index');
+    Route::post('/recoleccion', [RecoleccionEvidenciaController::class, 'store'])->name('recoleccion.store');
 });
 
 require __DIR__.'/auth.php';

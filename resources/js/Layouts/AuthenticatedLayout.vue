@@ -62,6 +62,20 @@ const showingNavigationDropdown = ref(false);
                                 >
                                     Empadronados
                                 </NavLink>
+
+                                <NavLink
+                                    :href="route('programacion.index')"
+                                    :active="route().current('programacion.index')"
+                                >
+                                    Programación
+                                </NavLink>
+
+                                <NavLink
+                                    :href="route('recoleccion.index')"
+                                    :active="route().current('recoleccion.index')"
+                                >
+                                    Mis Recolecciones
+                                </NavLink>
                             </div>
                         </div>
 
@@ -187,6 +201,20 @@ const showingNavigationDropdown = ref(false);
                         >
                             Empadronados
                         </ResponsiveNavLink>
+
+                        <ResponsiveNavLink
+                            :href="route('programacion.index')"
+                            :active="route().current('programacion.index')"
+                        >
+                            Programación
+                        </ResponsiveNavLink>
+
+                        <ResponsiveNavLink
+                            :href="route('recoleccion.index')"
+                            :active="route().current('recoleccion.index')"
+                        >
+                            Mis Recolecciones
+                        </ResponsiveNavLink>
                     </div>
 
                     <!-- Responsive Settings Options -->
@@ -237,3 +265,34 @@ const showingNavigationDropdown = ref(false);
         </div>
     </div>
 </template>
+
+<style>
+/* Paleta Chancay global + utilidades para que no se pierdan tras recargar */
+:root {
+    --chancay-dorado: #F4C542;
+    --chancay-azul: #002F6C;
+    --chancay-verde: #2E8B57;
+    --chancay-marron: #A0522D;
+    --chancay-gris: #C0C0C0;
+    --chancay-blanco: #F8F8F8;
+}
+
+.bg-chancay-dorado { background-color: var(--chancay-dorado); }
+.bg-chancay-azul { background-color: var(--chancay-azul); }
+.bg-chancay-verde { background-color: var(--chancay-verde); }
+.bg-chancay-marron { background-color: var(--chancay-marron); }
+.bg-chancay-gris { background-color: var(--chancay-gris); }
+.text-chancay-dorado { color: var(--chancay-dorado); }
+.text-chancay-azul { color: var(--chancay-azul); }
+.text-chancay-verde { color: var(--chancay-verde); }
+.text-chancay-marron { color: var(--chancay-marron); }
+.text-chancay-gris { color: var(--chancay-gris); }
+
+/* Toast SweetAlert2 global para estilo consistente */
+.colored-toast {
+  background-color: white !important;
+  border-left: 4px solid var(--chancay-azul) !important;
+  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1) !important;
+}
+.colored-toast .swal2-title { color: var(--chancay-azul) !important; }
+</style>

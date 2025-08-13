@@ -19,7 +19,7 @@ return new class extends Migration
             $table->json('dias');
             $table->time('hora_inicio');
             $table->time('hora_fin');
-            $table->boolean('completado')->default(false);
+            $table->string('descripcion')->nullable();
             $table->timestamps();
         });
     }
@@ -32,3 +32,4 @@ return new class extends Migration
         Schema::dropIfExists('programacion');
     }
 };
+
