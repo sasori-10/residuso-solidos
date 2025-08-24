@@ -16,18 +16,18 @@ Route::get('/', function () {
 
 Route::get('/dashboard', function () {
     return Inertia::render('Dashboard');
-})->middleware(['auth', 'verified'])->name('dashboard');
+})->middleware(['auth', 'verified','recoleccion.only'])->name('dashboard');
 
-Route::middleware('auth')->group(function () {
+Route::middleware(['auth','recoleccion.only'])->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
-Route::middleware(['auth', 'verified'])->group(function () {
+Route::middleware(['auth', 'verified','recoleccion.only'])->group(function () {
     Route::get('/users', [UsuariosController::class, 'index'])->name('users.index');
     Route::post('/users', [UsuariosController::class, 'store'])->name('users.store');
     Route::put('/users/{user}', [UsuariosController::class, 'update'])->name('users.update');
-    Route::delete('/users/{user}', [UsuariosController::class, 'destroy'])->name('users.destroy');
+    Route::delete('/users/{user}', [UsuariosController::class, 'destroy'])->middleware('permission:edit.recoleccion')->name('users.destroy');
 
     // Rutas para Zonas y Sectores
     Route::get('/zonas-sectores', [ZonasSectoresController::class, 'index'])->name('zonas-sectores.index');
@@ -35,12 +35,12 @@ Route::middleware(['auth', 'verified'])->group(function () {
     // Rutas para Zonas
     Route::post('/zonas', [ZonasSectoresController::class, 'storeZona'])->name('zonas.store');
     Route::put('/zonas/{zona}', [ZonasSectoresController::class, 'updateZona'])->name('zonas.update');
-    Route::delete('/zonas/{zona}', [ZonasSectoresController::class, 'destroyZona'])->name('zonas.destroy');
+    Route::delete('/zonas/{zona}', [ZonasSectoresController::class, 'destroyZona'])->middleware('permission:edit.recoleccion')->name('zonas.destroy');
     
     // Rutas para Sectores
     Route::post('/sectores', [ZonasSectoresController::class, 'storeSector'])->name('sectores.store');
     Route::put('/sectores/{sector}', [ZonasSectoresController::class, 'updateSector'])->name('sectores.update');
-    Route::delete('/sectores/{sector}', [ZonasSectoresController::class, 'destroySector'])->name('sectores.destroy');
+    Route::delete('/sectores/{sector}', [ZonasSectoresController::class, 'destroySector'])->middleware('permission:edit.recoleccion')->name('sectores.destroy');
 
     // Rutas para Empadronados y Tipos de Empadronados
     Route::get('/empadronados', [EmpadronadosController::class, 'index'])->name('empadronados.index');
@@ -48,12 +48,12 @@ Route::middleware(['auth', 'verified'])->group(function () {
     // Rutas para Tipos de Empadronados
     Route::post('/tipos-empadronados', [EmpadronadosController::class, 'storeTipo'])->name('tipos-empadronados.store');
     Route::put('/tipos-empadronados/{tipo}', [EmpadronadosController::class, 'updateTipo'])->name('tipos-empadronados.update');
-    Route::delete('/tipos-empadronados/{tipo}', [EmpadronadosController::class, 'destroyTipo'])->name('tipos-empadronados.destroy');
+    Route::delete('/tipos-empadronados/{tipo}', [EmpadronadosController::class, 'destroyTipo'])->middleware('permission:edit.recoleccion')->name('tipos-empadronados.destroy');
     
     // Rutas para Empadronados
     Route::post('/empadronados', [EmpadronadosController::class, 'store'])->name('empadronados.store');
     Route::put('/empadronados/{empadronado}', [EmpadronadosController::class, 'update'])->name('empadronados.update');
-    Route::delete('/empadronados/{empadronado}', [EmpadronadosController::class, 'destroy'])->name('empadronados.destroy');
+    Route::delete('/empadronados/{empadronado}', [EmpadronadosController::class, 'destroy'])->middleware('permission:edit.recoleccion')->name('empadronados.destroy');
     
     // API para obtener sectores por zona
     Route::get('/api/sectores-by-zona/{zonaId}', [EmpadronadosController::class, 'getSectoresByZona'])->name('api.sectores-by-zona');
@@ -70,7 +70,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/programacion', [ProgramacionController::class, 'index'])->name('programacion.index');
     Route::post('/programacion', [ProgramacionController::class, 'store'])->name('programacion.store');
     Route::put('/programacion/{programacion}', [ProgramacionController::class, 'update'])->name('programacion.update');
-    Route::delete('/programacion/{programacion}', [ProgramacionController::class, 'destroy'])->name('programacion.destroy');
+    Route::delete('/programacion/{programacion}', [ProgramacionController::class, 'destroy'])->middleware('permission:edit.recoleccion')->name('programacion.destroy');
 
     // Mis Recolecciones (usuarios rol 3)
     Route::get('/recoleccion', [RecoleccionEvidenciaController::class, 'index'])->name('recoleccion.index');

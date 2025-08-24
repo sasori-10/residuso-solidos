@@ -1,13 +1,34 @@
 <script setup>
-import { ref } from 'vue';
+import { ref, computed } from 'vue';
 import ApplicationLogo from '@/Components/ApplicationLogo.vue';
 import Dropdown from '@/Components/Dropdown.vue';
 import DropdownLink from '@/Components/DropdownLink.vue';
 import NavLink from '@/Components/NavLink.vue';
 import ResponsiveNavLink from '@/Components/ResponsiveNavLink.vue';
-import { Link } from '@inertiajs/vue3';
+import { Link, usePage } from '@inertiajs/vue3';
 
 const showingNavigationDropdown = ref(false);
+
+// --- Permisos --------------------------------------------------------------
+const page = usePage();
+const user = computed(() => page.props.auth?.user || null);
+const userPermissions = computed(() => user.value?.permissions || []);
+
+function hasPermission(permission) {
+    return userPermissions.value.includes(permission);
+}
+
+function hasAnyPermission(list) {
+    return list.some(p => userPermissions.value.includes(p));
+}
+
+// Mapeo simple de módulos -> permisos requeridos
+// Puedes ajustar esto si luego creas permisos más específicos
+const canViewUsers = computed(() => hasPermission('manage.recoleccion'));
+const canViewZonasSectores = computed(() => hasAnyPermission(['edit.recoleccion','manage.recoleccion']));
+const canViewEmpadronados = computed(() => hasAnyPermission(['edit.recoleccion','manage.recoleccion']));
+const canViewProgramacion = computed(() => hasAnyPermission(['supervisor.recoleccion','manage.recoleccion']));
+const canViewRecoleccion = computed(() => hasPermission('verMisRecolecciones'));
 </script>
 
 <template>
@@ -43,39 +64,26 @@ const showingNavigationDropdown = ref(false);
                                 >
                                     Inicio
                                 </NavLink>
-                                <NavLink
+                                <NavLink v-if="canViewUsers"
                                     :href="route('users.index')"
                                     :active="route().current('users.index')"
-                                >
-                                    Usuarios
-                                </NavLink>
-                                <NavLink
+                                >Usuarios</NavLink>
+                                <NavLink v-if="canViewZonasSectores"
                                     :href="route('zonas-sectores.index')"
                                     :active="route().current('zonas-sectores.index')"
-                                >
-                                    Zonas y Sectores
-                                </NavLink>
-
-                                <NavLink
+                                >Zonas y Sectores</NavLink>
+                                <NavLink v-if="canViewEmpadronados"
                                     :href="route('empadronados.index')"
                                     :active="route().current('empadronados.index')"
-                                >
-                                    Empadronados
-                                </NavLink>
-
-                                <NavLink
+                                >Empadronados</NavLink>
+                                <NavLink v-if="canViewProgramacion"
                                     :href="route('programacion.index')"
                                     :active="route().current('programacion.index')"
-                                >
-                                    Programación
-                                </NavLink>
-
-                                <NavLink
+                                >Programación</NavLink>
+                                <NavLink v-if="canViewRecoleccion"
                                     :href="route('recoleccion.index')"
                                     :active="route().current('recoleccion.index')"
-                                >
-                                    Mis Recolecciones
-                                </NavLink>
+                                >Mis Recolecciones</NavLink>
                             </div>
                         </div>
 
@@ -183,38 +191,26 @@ const showingNavigationDropdown = ref(false);
                         >
                             Dashboard
                         </ResponsiveNavLink>
-                        <ResponsiveNavLink
+                        <ResponsiveNavLink v-if="canViewUsers"
                             :href="route('users.index')"
                             :active="route().current('users.index')"
-                        >
-                            Usuarios
-                        </ResponsiveNavLink>
-                        <ResponsiveNavLink
+                        >Usuarios</ResponsiveNavLink>
+                        <ResponsiveNavLink v-if="canViewZonasSectores"
                             :href="route('zonas-sectores.index')"
                             :active="route().current('zonas-sectores.index')"
-                        >
-                            Zonas y Sectores
-                        </ResponsiveNavLink>
-                        <ResponsiveNavLink
+                        >Zonas y Sectores</ResponsiveNavLink>
+                        <ResponsiveNavLink v-if="canViewEmpadronados"
                             :href="route('empadronados.index')"
                             :active="route().current('empadronados.index')"
-                        >
-                            Empadronados
-                        </ResponsiveNavLink>
-
-                        <ResponsiveNavLink
+                        >Empadronados</ResponsiveNavLink>
+                        <ResponsiveNavLink v-if="canViewProgramacion"
                             :href="route('programacion.index')"
                             :active="route().current('programacion.index')"
-                        >
-                            Programación
-                        </ResponsiveNavLink>
-
-                        <ResponsiveNavLink
+                        >Programación</ResponsiveNavLink>
+                        <ResponsiveNavLink v-if="canViewRecoleccion"
                             :href="route('recoleccion.index')"
                             :active="route().current('recoleccion.index')"
-                        >
-                            Mis Recolecciones
-                        </ResponsiveNavLink>
+                        >Mis Recolecciones</ResponsiveNavLink>
                     </div>
 
                     <!-- Responsive Settings Options -->

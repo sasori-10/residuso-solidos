@@ -20,7 +20,14 @@ class UsuariosController extends Controller
                 'role'  => $user->roles->pluck('name')->first() ?? '',
             ];
         });
-        $roles = Role::pluck('name');
+        // Si el usuario autenticado es supervisor, solo mostrar rol "user" para asignar
+        $auth = auth()->user();
+        $allRoles = Role::pluck('name');
+        if ($auth && $auth->hasRole('supervisor')) {
+            $roles = $allRoles->filter(fn($r) => strtolower($r) === 'user')->values();
+        } else {
+            $roles = $allRoles;
+        }
         return Inertia::render('Users/index', [
             'users' => $users,
             'roles' => $roles,
@@ -35,6 +42,11 @@ class UsuariosController extends Controller
             'password' => 'required|string|min:6',
             'role' => 'required|string|exists:roles,name',
         ]);
+        // Regla extra: si quien crea es supervisor, forzar rol 'user'
+        $creator = $request->user();
+        if ($creator && $creator->hasRole('supervisor')) {
+            $data['role'] = 'user';
+        }
         $data['password'] = Hash::make($data['password']);
         $user = User::create($data);
         $user->syncRoles([$data['role']]);
@@ -50,6 +62,11 @@ class UsuariosController extends Controller
             'password' => 'nullable|string|min:6',
             'role' => 'required|string|exists:roles,name',
         ]);
+        // Regla extra: supervisor solo puede cambiar a 'user'
+        $editor = $request->user();
+        if ($editor && $editor->hasRole('supervisor')) {
+            $data['role'] = 'user';
+        }
         if ($request->filled('password')) {
             $data['password'] = Hash::make($request->password);
         } else {
@@ -63,6 +80,9 @@ class UsuariosController extends Controller
 
     public function destroy(User $user)
     {
+        if (!auth()->user()->can('edit.recoleccion')) {
+            abort(403, 'No autorizado.');
+        }
         $user->delete();
         return redirect()->route('users.index')->with('success', 'Usuario eliminado correctamente');
     }

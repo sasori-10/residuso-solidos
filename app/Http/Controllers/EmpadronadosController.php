@@ -143,6 +143,9 @@ class EmpadronadosController extends Controller
 
     public function destroyTipo(TipoEmpadronados $tipo)
     {
+        if (!auth()->user()->can('edit.recoleccion')) {
+            abort(403, 'No autorizado.');
+        }
         // Verificar si el tipo tiene empadronados
         if ($tipo->empadronados()->count() > 0) {
             return redirect()->route('empadronados.index')->with('error', 'No se puede eliminar el tipo porque tiene empadronados asignados');
@@ -218,6 +221,9 @@ class EmpadronadosController extends Controller
 
     public function destroy(Empadronados $empadronado)
     {
+        if (!auth()->user()->can('edit.recoleccion')) {
+            abort(403, 'No autorizado.');
+        }
         $empadronado->delete();
         return redirect()->route('empadronados.index')->with('success', 'Empadronado eliminado correctamente');
     }

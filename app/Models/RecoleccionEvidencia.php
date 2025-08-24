@@ -15,7 +15,9 @@ class RecoleccionEvidencia extends Model
         'programacion_id',
         'empadronado_id',
         'ruta_foto',
-        'completado'
+        'completado',
+        'estado',
+        'comentario',
     ];
 
     public function programacion()

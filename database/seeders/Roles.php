@@ -18,22 +18,24 @@ class Roles extends Seeder
         $user = Role::firstOrCreate(['name' => 'user']);
 
         // Crear permisos (o usar existentes)
-        $viewBooks = Permission::firstOrCreate(['name' => 'view books']);
-        $editBooks = Permission::firstOrCreate(['name' => 'edit books']);
-        $viewReservations = Permission::firstOrCreate(['name' => 'view reservations']);
-        $manageReservations = Permission::firstOrCreate(['name' => 'manage reservations']);
-        
+        $viewUser = Permission::firstOrCreate(['name' => 'view.recoleccion']);
+        $editEmpadronado = Permission::firstOrCreate(['name' => 'edit.recoleccion']);
+        $viewSupervisor = Permission::firstOrCreate(['name' => 'supervisor.recoleccion']);
+        $manageRecolector = Permission::firstOrCreate(['name' => 'manage.recoleccion']);
+
+    $verMisRecolecciones = Permission::firstOrCreate(['name' => 'verMisRecolecciones']);
+
         // Asignar permisos a roles (sin duplicarlos)
         $admin->syncPermissions([
-            $viewBooks, $editBooks, $viewReservations, $manageReservations
+            $viewUser, $verMisRecolecciones, $editEmpadronado, $viewSupervisor, $manageRecolector
         ]);
         
         $supervisor->syncPermissions([
-            $viewBooks, $editBooks, $viewReservations, $manageReservations
+            $viewUser, $verMisRecolecciones, $viewSupervisor, $manageRecolector
         ]);
         
         $user->syncPermissions([
-            $viewBooks
+            $viewUser, $verMisRecolecciones 
         ]);
     }
 }

@@ -70,6 +70,9 @@ class ZonasSectoresController extends Controller
 
     public function destroyZona(Zonas $zona)
     {
+        if (!auth()->user()->can('edit.recoleccion')) {
+            abort(403, 'No autorizado.');
+        }
         // Verificar si la zona tiene sectores
         if ($zona->sectores()->count() > 0) {
             return redirect()->route('zonas-sectores.index')->with('error', 'No se puede eliminar la zona porque tiene sectores asignados');
@@ -106,6 +109,9 @@ class ZonasSectoresController extends Controller
 
     public function destroySector(Sectores $sector)
     {
+        if (!auth()->user()->can('edit.recoleccion')) {
+            abort(403, 'No autorizado.');
+        }
         $sector->delete();
         return redirect()->route('zonas-sectores.index')->with('success', 'Sector eliminado correctamente');
     }

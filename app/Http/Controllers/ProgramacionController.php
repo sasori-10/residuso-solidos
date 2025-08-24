@@ -135,6 +135,10 @@ class ProgramacionController extends Controller
 
     public function destroy(Programacion $programacion)
     {
+        // Verificación adicional de permiso (defensa en profundidad)
+        if (!auth()->user() || !auth()->user()->can('edit.recoleccion')) {
+            abort(403, 'No autorizado.');
+        }
         $programacion->delete();
 
         return back()->with('success', 'Programación eliminada.');

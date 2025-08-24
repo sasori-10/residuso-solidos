@@ -37,4 +37,12 @@ class Programacion extends Model
     {
         return $this->belongsTo(\App\Models\Sectores::class);
     }
+
+    /**
+     * Empadronados asignados explícitamente mediante la tabla pivot empadronado_programacion
+     */
+    public function empadronados()
+    {
+        return $this->belongsToMany(Empadronados::class, 'empadronado_programacion', 'programacion_id', 'empadronado_id');
+    }
 }

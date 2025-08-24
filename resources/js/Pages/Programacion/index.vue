@@ -1,6 +1,6 @@
 <script setup>
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
-import { Head, useForm } from '@inertiajs/vue3';
+import { Head, useForm, router } from '@inertiajs/vue3';
 import { ref, watch, computed } from 'vue';
 import axios from 'axios';
 import Swal from 'sweetalert2';
@@ -11,6 +11,12 @@ const props = defineProps({
   zonas: { type: Array, required: true },
   programaciones: { type: Array, required: true },
 });
+
+// Permisos (usando los compartidos por Inertia en HandleInertiaRequests)
+import { usePage } from '@inertiajs/vue3';
+const page = usePage();
+const userPermissions = computed(() => page.props.auth?.user?.permissions || []);
+const canDelete = computed(() => userPermissions.value.includes('edit.recoleccion'));
 
 // Estados
 const editId = ref(null);
@@ -197,6 +203,13 @@ const progressData = computed(() => {
     sector: p.sector?.nombre || '',
   };
 });
+
+function goToEvidencias() {
+  const p = selectedProgramacion.value;
+  if (!p) return;
+  // Navegar pasando el user (recolector) como query param
+  router.get(route('recoleccion.index'), { user: p.user_id });
+}
 </script>
 
 <template>
@@ -278,6 +291,7 @@ const progressData = computed(() => {
                           Editar
                         </button>
                         <button
+                          v-if="canDelete"
                           class="rounded-md bg-red-600 px-3 py-1 text-sm text-white hover:bg-red-700"
                           @click="eliminar(p.id)"
                         >
@@ -446,7 +460,10 @@ const progressData = computed(() => {
                 </div>
               </div>
 
-              <div class="flex justify-end">
+              <div class="flex justify-end gap-2">
+                <button @click="goToEvidencias" class="mt-2 px-4 py-2 rounded-lg bg-chancay-azul text-white text-sm hover:bg-chancay-verde">
+                  Ver evidencias
+                </button>
                 <button @click="showProgressModal = false" class="mt-2 px-4 py-2 rounded-lg bg-gray-200 text-gray-800 text-sm hover:bg-gray-300">
                   Cerrar
                 </button>

@@ -18,6 +18,12 @@ const props = defineProps({
     tiposForFilter: Object,
 });
 
+// Permisos
+import { usePage } from '@inertiajs/vue3';
+const page = usePage();
+const userPermissions = computed(() => page.props.auth?.user?.permissions || []);
+const canDelete = computed(() => userPermissions.value.includes('edit.recoleccion'));
+
 const tiposEmpadronados = ref(props.tiposEmpadronados ?? []);
 const empadronados = ref(props.empadronados ?? []);
 const pagination = ref(props.pagination ?? {});
@@ -918,7 +924,8 @@ function generateCodigoPreview(tipoId) {
                             <table class="w-full text-sm text-left text-gray-700">
                                 <thead class="text-xs uppercase bg-chancay-azul text-white">
                                     <tr>
-                                        <th scope="col" class="py-3 px-4 rounded-tl-lg">DNI</th>
+                                        <th scope="col" class="py-3 px-4 rounded-tl-lg">#</th>
+                                        <th scope="col" class="py-3 px-4">Código Ruta</th>
                                         <th scope="col" class="py-3 px-4">Nombre</th>
                                         <th scope="col" class="py-3 px-4">Dirección</th>
                                         <th scope="col" class="py-3 px-4">Código</th>
@@ -930,8 +937,10 @@ function generateCodigoPreview(tipoId) {
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    <tr v-for="empadronado in empadronados" :key="empadronado.id" class="bg-white border-b hover:bg-gray-50">
-                                        <td class="py-3 px-4 font-medium">{{ empadronado.dni }}</td>
+                                    <tr v-for="(empadronado, idx) in empadronados" :key="empadronado.id" class="bg-white border-b hover:bg-gray-50">
+                                        <!-- Cambiado: contador global -->
+                                        <td class="py-3 px-4 font-medium">{{ (pagination.from || 1) + idx }}</td>
+                                        <td class="py-3 px-4 font-medium">{{ empadronado.codigo_ruta || 'N/A' }}</td>
                                         <td class="py-3 px-4">{{ empadronado.nombre }}</td>
                                         <td class="py-3 px-4 max-w-xs truncate">{{ empadronado.direccion }}</td>
                                         <td class="py-3 px-4">
@@ -964,7 +973,7 @@ function generateCodigoPreview(tipoId) {
                                                         <path d="M13.586 3.586a2 2 0 112.828 2.828l-.793.793-2.828-2.828.793-.793zM11.379 5.793L3 14.172V17h2.828l8.38-8.379-2.83-2.828z" />
                                                     </svg>
                                                 </button>
-                                                <button @click="deleteEmpadronado(empadronado)" class="text-red-600 hover:text-red-800 transition">
+                                                <button v-if="canDelete" @click="deleteEmpadronado(empadronado)" class="text-red-600 hover:text-red-800 transition">
                                                     <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
                                                         <path fill-rule="evenodd" d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z" clip-rule="evenodd" />
                                                     </svg>
@@ -973,7 +982,7 @@ function generateCodigoPreview(tipoId) {
                                         </td>
                                     </tr>
                                     <tr v-if="empadronados.length === 0">
-                                        <td colspan="9" class="text-center py-6 text-gray-500">No hay empadronados que coincidan con los filtros.</td>
+                                        <td colspan="10" class="text-center py-6 text-gray-500">No hay empadronados que coincidan con los filtros.</td>
                                     </tr>
                                 </tbody>
                             </table>
